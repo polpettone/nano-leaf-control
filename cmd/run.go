@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"net/http"
 )
+
 
 func RunCmd() *cobra.Command {
 	return &cobra.Command{
@@ -23,29 +23,25 @@ func RunCmd() *cobra.Command {
 
 
 func handleRunCommand() (string, error) {
-	haveFun()
 	return "", nil
 }
+
 
 func init() {
 	runCmd := RunCmd()
 	rootCmd.AddCommand(runCmd)
 }
 
-func haveFun() {
-	url := viper.GetString("nano_leaf_url")
+
+func GetURL() string {
+	nanoLeafURL := viper.GetString("nano_leaf_url")
 	token := viper.GetString("token")
-
-
-	fmt.Printf("%s %s", url, token )
-
-	req, err := http.NewRequest("GET", url, nil)
-
-	if err != nil {
-		fmt.Printf("%s", req)
-	}
-
-	fmt.Printf("%s", req)
-
+	apiPath := "api/v1"
+	url := fmt.Sprintf("http://%s/%s/%s", nanoLeafURL, apiPath, token)
+	return url
 }
+
+
+
+
 

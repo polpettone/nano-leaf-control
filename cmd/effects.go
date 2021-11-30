@@ -22,9 +22,6 @@ func EffectsCmd() *cobra.Command {
 			fmt.Fprintf(cmd.OutOrStdout(), stdout)
 		},
 	}
-
-
-
 }
 
 func handleEffectsCommand(effect string) (string, error) {

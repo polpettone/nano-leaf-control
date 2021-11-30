@@ -10,7 +10,6 @@ import (
 	"time"
 )
 
-
 func EffectsCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "effects",
@@ -23,8 +22,10 @@ func EffectsCmd() *cobra.Command {
 			fmt.Fprintf(cmd.OutOrStdout(), stdout)
 		},
 	}
-}
 
+
+
+}
 
 func handleEffectsCommand(effect string) (string, error) {
 
@@ -34,18 +35,16 @@ func handleEffectsCommand(effect string) (string, error) {
 	return setEffect(effect)
 }
 
-
 func init() {
 	c := EffectsCmd()
 	rootCmd.AddCommand(c)
 }
 
-
 func getEffects() (string, error) {
 
 	url := GetURL()
 
-	req, err := http.NewRequest("GET", url + "/effects", nil)
+	req, err := http.NewRequest("GET", url+"/effects", nil)
 
 	if err != nil {
 		fmt.Printf("%s", err)
@@ -71,7 +70,7 @@ func getEffects() (string, error) {
 	return string(body), nil
 }
 
-func setEffect(effect string) (string, error){
+func setEffect(effect string) (string, error) {
 
 	values := map[string]string{"select": effect}
 
@@ -79,7 +78,7 @@ func setEffect(effect string) (string, error){
 
 	url := GetURL()
 
-	req, err := http.NewRequest("PUT", url + "/effects", bytes.NewBuffer(jsonValue))
+	req, err := http.NewRequest("PUT", url+"/effects", bytes.NewBuffer(jsonValue))
 
 	if err != nil {
 		fmt.Printf("%s", err)
@@ -104,8 +103,3 @@ func setEffect(effect string) (string, error){
 
 	return string(body), nil
 }
-
-
-
-
-

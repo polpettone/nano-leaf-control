@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/cobra"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/spf13/cobra"
 )
 
 func EffectsCmd() *cobra.Command {
@@ -15,7 +16,7 @@ func EffectsCmd() *cobra.Command {
 		Use:   "effects",
 		Short: "",
 		Run: func(cmd *cobra.Command, args []string) {
-			stdout, err := handleEffectsCommand(args[0])
+			stdout, err := handleEffectsCommand(args)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -24,12 +25,12 @@ func EffectsCmd() *cobra.Command {
 	}
 }
 
-func handleEffectsCommand(effect string) (string, error) {
-
-	if effect == "" {
+func handleEffectsCommand(args []string) (string, error) {
+	if len(args) < 1 {
 		return getEffects()
 	}
-	return setEffect(effect)
+
+	return setEffect(args[0])
 }
 
 func init() {
@@ -44,15 +45,14 @@ func getEffects() (string, error) {
 	req, err := http.NewRequest("GET", url+"/effects", nil)
 
 	if err != nil {
-		fmt.Printf("%s", err)
+		return "", err
 	}
 
 	client := &http.Client{Timeout: time.Second * 1}
 	resp, err := client.Do(req)
 
 	if err != nil {
-		fmt.Printf("%s", err)
-		return "", nil
+		return "", err
 	}
 
 	defer resp.Body.Close()
@@ -60,8 +60,11 @@ func getEffects() (string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		fmt.Printf("%s", err)
-		return "", nil
+		return "", err
+	}
+
+	if err != nil {
+		return "", err
 	}
 
 	return string(body), nil
@@ -85,8 +88,7 @@ func setEffect(effect string) (string, error) {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		fmt.Printf("%s", err)
-		return "", nil
+		return "", err
 	}
 
 	defer resp.Body.Close()
@@ -94,8 +96,7 @@ func setEffect(effect string) (string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		fmt.Printf("%s", err)
-		return "", nil
+		return "", err
 	}
 
 	return string(body), nil

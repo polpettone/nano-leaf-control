@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/polpettone/nano-leaf-control/cmd/models"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +28,12 @@ func EffectsCmd() *cobra.Command {
 
 func handleEffectsCommand(args []string) (string, error) {
 	if len(args) < 1 {
-		return getEffects()
+
+		effects, err := getEffects()
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf("%s", effects), nil
 	}
 
 	return setEffect(args[0])
@@ -38,21 +44,21 @@ func init() {
 	rootCmd.AddCommand(c)
 }
 
-func getEffects() (string, error) {
+func getEffects() (*models.Effects, error) {
 
 	url := GetURL()
 
 	req, err := http.NewRequest("GET", url+"/effects", nil)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	client := &http.Client{Timeout: time.Second * 1}
 	resp, err := client.Do(req)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	defer resp.Body.Close()
@@ -60,14 +66,16 @@ func getEffects() (string, error) {
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
+
+	effects, err := models.ConvertJsonToEffects(body)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return string(body), nil
+	return effects, nil
 }
 
 func setEffect(effect string) (string, error) {

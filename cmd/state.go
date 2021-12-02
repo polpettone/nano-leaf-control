@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/polpettone/nano-leaf-control/cmd/models"
 	"github.com/spf13/cobra"
 )
 
@@ -74,17 +75,9 @@ func getState() (string, error) {
 	return string(body), nil
 }
 
-type OnStateValue struct {
-	Value bool `json:"value"`
-}
-
-type OnState struct {
-	On OnStateValue `json:"on"`
-}
-
 func stateBody(onValue bool) []byte {
-	onState := OnState{
-		On: OnStateValue{
+	onState := models.OnState{
+		On: models.OnStateValue{
 			Value: onValue,
 		},
 	}

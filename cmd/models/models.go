@@ -15,3 +15,11 @@ func ConvertJsonToEffects(jsonData []byte) (*Effects, error) {
 	}
 	return &effects, nil
 }
+
+type OnStateValue struct {
+	Value bool `json:"value"`
+}
+
+type OnState struct {
+	On OnStateValue `json:"on"`
+}

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/polpettone/nano-leaf-control/cmd/config"
 	"github.com/polpettone/nano-leaf-control/cmd/models"
 	"github.com/spf13/cobra"
 )
@@ -46,7 +47,7 @@ func init() {
 
 func getEffects() (*models.Effects, error) {
 
-	url := GetURL()
+	url := config.GetURL()
 
 	req, err := http.NewRequest("GET", url+"/effects", nil)
 
@@ -84,7 +85,7 @@ func setEffect(effect string) (string, error) {
 
 	jsonValue, _ := json.Marshal(values)
 
-	url := GetURL()
+	url := config.GetURL()
 
 	req, err := http.NewRequest("PUT", url+"/effects", bytes.NewBuffer(jsonValue))
 

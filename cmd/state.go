@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/polpettone/nano-leaf-control/cmd/config"
 	"github.com/polpettone/nano-leaf-control/cmd/models"
 	"github.com/spf13/cobra"
 )
@@ -45,7 +46,7 @@ func init() {
 
 func getState() (string, error) {
 
-	url := GetURL()
+	url := config.GetURL()
 
 	req, err := http.NewRequest("GET", url+"/state", nil)
 
@@ -95,7 +96,7 @@ func setState(state string) (string, error) {
 		jsonValue = stateBody(false)
 	}
 
-	url := GetURL()
+	url := config.GetURL()
 
 	req, err := http.NewRequest("PUT", url+"/state", bytes.NewBuffer(jsonValue))
 

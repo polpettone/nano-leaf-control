@@ -23,3 +23,12 @@ type OnStateValue struct {
 type OnState struct {
 	On OnStateValue `json:"on"`
 }
+
+type BrightnessValue struct {
+	Value    int64 `json:"value"`
+	Duration int64 `json:"duration"`
+}
+
+type Brightness struct {
+	BrightnessValue BrightnessValue `json:"brightness"`
+}

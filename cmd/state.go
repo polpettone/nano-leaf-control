@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/polpettone/nano-leaf-control/cmd/config"
@@ -36,7 +37,40 @@ func handleStateCommand(args []string) (string, error) {
 		return fmt.Sprintf("%s", state), nil
 	}
 
-	return setState(args[0])
+	if args[0] == "on" || args[0] == "off" {
+		return setState(args[0])
+	}
+
+	if args[0] == "brightness" {
+
+		if len(args) > 1 {
+
+			value, err := strconv.ParseInt(args[1], 10, 64)
+
+			if err != nil {
+				return "brightness needs numeric value", nil
+			}
+
+			return setBrightness(value, 0)
+
+		} else {
+			return "brightness needs at least one value", nil
+		}
+	}
+
+	if args[0] == "hue" {
+		return "hue setting comming soon", nil
+	}
+
+	if args[0] == "saturation" {
+		return "saturation setting comming soon", nil
+	}
+
+	if args[0] == "temperature" {
+		return "color temeratute setting comming soon", nil
+	}
+
+	return "no valid command", nil
 }
 
 func init() {
@@ -95,6 +129,51 @@ func setState(state string) (string, error) {
 	} else {
 		jsonValue = stateBody(false)
 	}
+
+	url := config.GetURL()
+
+	req, err := http.NewRequest("PUT", url+"/state", bytes.NewBuffer(jsonValue))
+
+	if err != nil {
+		return "", err
+	}
+
+	client := &http.Client{Timeout: time.Second * 1}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return "", err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(body), nil
+}
+
+func brightnessBody(value int64, duration int64) []byte {
+
+	b := models.Brightness{
+		BrightnessValue: models.BrightnessValue{
+			Value:    value,
+			Duration: duration,
+		},
+	}
+
+	jsonValue, _ := json.Marshal(b)
+	return jsonValue
+}
+
+func setBrightness(value int64, duration int64) (string, error) {
+
+	jsonValue := brightnessBody(value, duration)
+
+	fmt.Printf("set brightness %s", jsonValue)
 
 	url := config.GetURL()
 

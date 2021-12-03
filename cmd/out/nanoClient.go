@@ -44,16 +44,6 @@ func GetState() (string, error) {
 	return string(body), nil
 }
 
-func stateBody(onValue bool) []byte {
-	onState := models.OnState{
-		On: models.OnStateValue{
-			Value: onValue,
-		},
-	}
-	jsonValue, _ := json.Marshal(onState)
-	return jsonValue
-}
-
 func SetState(state string) (string, error) {
 
 	var jsonValue []byte
@@ -64,43 +54,9 @@ func SetState(state string) (string, error) {
 		jsonValue = stateBody(false)
 	}
 
-	url := config.GetURL()
+	fmt.Printf("set state %s", jsonValue)
 
-	req, err := http.NewRequest("PUT", url+"/state", bytes.NewBuffer(jsonValue))
-
-	if err != nil {
-		return "", err
-	}
-
-	client := &http.Client{Timeout: time.Second * 1}
-	resp, err := client.Do(req)
-
-	if err != nil {
-		return "", err
-	}
-
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		return "", err
-	}
-
-	return string(body), nil
-}
-
-func brightnessBody(value int64, duration int64) []byte {
-
-	b := models.Brightness{
-		BrightnessValue: models.BrightnessValue{
-			Value:    value,
-			Duration: duration,
-		},
-	}
-
-	jsonValue, _ := json.Marshal(b)
-	return jsonValue
+	return makeStateAPICall(jsonValue)
 }
 
 func SetBrightness(value int64, duration int64) (string, error) {
@@ -109,28 +65,45 @@ func SetBrightness(value int64, duration int64) (string, error) {
 
 	fmt.Printf("set brightness %s", jsonValue)
 
+	return makeStateAPICall(jsonValue)
+}
+
+func makeStateAPICall(stateJsonBody []byte) (string, error) {
 	url := config.GetURL()
-
-	req, err := http.NewRequest("PUT", url+"/state", bytes.NewBuffer(jsonValue))
-
+	req, err := http.NewRequest("PUT", url+"/state", bytes.NewBuffer(stateJsonBody))
 	if err != nil {
 		return "", err
 	}
-
 	client := &http.Client{Timeout: time.Second * 1}
 	resp, err := client.Do(req)
-
 	if err != nil {
 		return "", err
 	}
-
 	defer resp.Body.Close()
-
 	body, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		return "", err
 	}
-
 	return string(body), nil
+}
+
+func brightnessBody(value int64, duration int64) []byte {
+	b := models.Brightness{
+		BrightnessValue: models.BrightnessValue{
+			Value:    value,
+			Duration: duration,
+		},
+	}
+	jsonValue, _ := json.Marshal(b)
+	return jsonValue
+}
+
+func stateBody(onValue bool) []byte {
+	onState := models.OnState{
+		On: models.OnStateValue{
+			Value: onValue,
+		},
+	}
+	jsonValue, _ := json.Marshal(onState)
+	return jsonValue
 }

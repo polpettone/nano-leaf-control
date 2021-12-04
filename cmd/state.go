@@ -36,19 +36,24 @@ func handleStateCommand(args []string) (string, error) {
 	}
 
 	if args[0] == "brightness" {
-
-		if len(args) > 1 {
-
+		if len(args) == 2 {
 			value, err := strconv.ParseInt(args[1], 10, 64)
-
 			if err != nil {
 				return "brightness needs numeric value", nil
 			}
-
 			return out.SetBrightness(value, 0)
-
+		} else if len(args) == 3 {
+			brightnessValue, err := strconv.ParseInt(args[1], 10, 64)
+			if err != nil {
+				return "brightness needs numeric value", nil
+			}
+			durationValue, err := strconv.ParseInt(args[2], 10, 64)
+			if err != nil {
+				return "brightness durations needs numeric value", nil
+			}
+			return out.SetBrightness(brightnessValue, durationValue)
 		} else {
-			return "brightness needs at least one value", nil
+			return "brightness needs one or two numeric values", nil
 		}
 	}
 

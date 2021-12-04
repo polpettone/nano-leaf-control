@@ -31,24 +31,21 @@ func handleStateCommand(args []string) (string, error) {
 		return fmt.Sprintf("%s", state), nil
 	}
 
-	if args[0] == "on" || args[0] == "off" {
+	switch args[0] {
+	case "on":
 		return out.SetState(args[0])
-	}
-
-	if args[0] == "brightness" {
+	case "off":
+		return out.SetState(args[0])
+	case "brightness":
 		return handleStateBrightnessCommand(args)
-	}
-
-	if args[0] == "hue" {
+	case "hue":
 		return "hue setting comming soon", nil
-	}
-
-	if args[0] == "saturation" {
+	case "saturation":
 		return "saturation setting comming soon", nil
-	}
-
-	if args[0] == "temperature" {
+	case "temperature":
 		return "color temeratute setting comming soon", nil
+	default:
+		return "no valid command", nil
 	}
 
 	return "no valid command", nil

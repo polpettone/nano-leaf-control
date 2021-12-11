@@ -25,6 +25,14 @@ func StateCmd() *cobra.Command {
 func handleStateCommand(command *cobra.Command, args []string) (string, error) {
 
 	nanoLeafID := int64(2)
+	id, err := command.Flags().GetString("id")
+	if err != nil {
+		return "", err
+	}
+	nanoLeafID, err = strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return "", err
+	}
 
 	if len(args) < 1 {
 		state, err := out.GetState(nanoLeafID)
@@ -82,4 +90,11 @@ func handleStateBrightnessCommand(nanoLeafID int64, args []string) (string, erro
 func init() {
 	c := StateCmd()
 	rootCmd.AddCommand(c)
+
+	c.Flags().StringP(
+		"id",
+		"",
+		"",
+		"use the nano leaf with the given id")
+
 }

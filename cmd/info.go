@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/polpettone/nano-leaf-control/cmd/config"
@@ -15,7 +16,7 @@ func InfoCmd() *cobra.Command {
 		Use:   "run",
 		Short: "",
 		Run: func(cmd *cobra.Command, args []string) {
-			stdout, err := handleInfoCommand()
+			stdout, err := handleInfoCommand(cmd)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -24,8 +25,16 @@ func InfoCmd() *cobra.Command {
 	}
 }
 
-func handleInfoCommand() (string, error) {
+func handleInfoCommand(command *cobra.Command) (string, error) {
 	nanoLeafID := int64(2)
+	id, err := command.Flags().GetString("id")
+	if err != nil {
+		return "", err
+	}
+	nanoLeafID, err = strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return "", err
+	}
 	return getInfo(nanoLeafID)
 }
 

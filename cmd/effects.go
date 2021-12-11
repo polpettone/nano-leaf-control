@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/polpettone/nano-leaf-control/cmd/config"
@@ -18,7 +19,7 @@ func EffectsCmd() *cobra.Command {
 		Use:   "effects",
 		Short: "",
 		Run: func(cmd *cobra.Command, args []string) {
-			stdout, err := handleEffectsCommand(args)
+			stdout, err := handleEffectsCommand(cmd, args)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -27,9 +28,18 @@ func EffectsCmd() *cobra.Command {
 	}
 }
 
-func handleEffectsCommand(args []string) (string, error) {
+func handleEffectsCommand(command *cobra.Command, args []string) (string, error) {
 
 	nanoLeafID := int64(2)
+	id, err := command.Flags().GetString("id")
+	if err != nil {
+		return "", err
+	}
+	nanoLeafID, err = strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		return "", err
+	}
+
 	if len(args) < 1 {
 
 		effects, err := getEffects(nanoLeafID)

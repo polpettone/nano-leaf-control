@@ -25,7 +25,8 @@ func InfoCmd() *cobra.Command {
 }
 
 func handleInfoCommand() (string, error) {
-	return getInfo()
+	nanoLeafID := int64(2)
+	return getInfo(nanoLeafID)
 }
 
 func init() {
@@ -33,8 +34,8 @@ func init() {
 	rootCmd.AddCommand(i)
 }
 
-func getInfo() (string, error) {
-	url := config.GetURL()
+func getInfo(nanoLeafID int64) (string, error) {
+	url := config.GetURL(nanoLeafID)
 	req, err := http.NewRequest("GET", url, nil)
 
 	if err != nil {

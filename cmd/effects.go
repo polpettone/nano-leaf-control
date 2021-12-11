@@ -28,16 +28,18 @@ func EffectsCmd() *cobra.Command {
 }
 
 func handleEffectsCommand(args []string) (string, error) {
+
+	nanoLeafID := int64(2)
 	if len(args) < 1 {
 
-		effects, err := getEffects()
+		effects, err := getEffects(nanoLeafID)
 		if err != nil {
 			return "", err
 		}
 		return fmt.Sprintf("%s", effects), nil
 	}
 
-	return setEffect(args[0])
+	return setEffect(nanoLeafID, args[0])
 }
 
 func init() {
@@ -45,9 +47,9 @@ func init() {
 	rootCmd.AddCommand(c)
 }
 
-func getEffects() (*models.Effects, error) {
+func getEffects(nanoLeafID int64) (*models.Effects, error) {
 
-	url := config.GetURL()
+	url := config.GetURL(nanoLeafID)
 
 	req, err := http.NewRequest("GET", url+"/effects", nil)
 
@@ -79,13 +81,13 @@ func getEffects() (*models.Effects, error) {
 	return effects, nil
 }
 
-func setEffect(effect string) (string, error) {
+func setEffect(nanoLeafID int64, effect string) (string, error) {
 
 	values := map[string]string{"select": effect}
 
 	jsonValue, _ := json.Marshal(values)
 
-	url := config.GetURL()
+	url := config.GetURL(nanoLeafID)
 
 	req, err := http.NewRequest("PUT", url+"/effects", bytes.NewBuffer(jsonValue))
 

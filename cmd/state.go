@@ -13,7 +13,7 @@ func StateCmd() *cobra.Command {
 		Use:   "state",
 		Short: "",
 		Run: func(cmd *cobra.Command, args []string) {
-			stdout, err := handleStateCommand(args)
+			stdout, err := handleStateCommand(cmd, args)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -22,9 +22,12 @@ func StateCmd() *cobra.Command {
 	}
 }
 
-func handleStateCommand(args []string) (string, error) {
+func handleStateCommand(command *cobra.Command, args []string) (string, error) {
+
+	nanoLeafID := int64(2)
+
 	if len(args) < 1 {
-		state, err := out.GetState()
+		state, err := out.GetState(nanoLeafID)
 		if err != nil {
 			return "", err
 		}
@@ -33,11 +36,11 @@ func handleStateCommand(args []string) (string, error) {
 
 	switch args[0] {
 	case "on":
-		return out.SetState(args[0])
+		return out.SetState(nanoLeafID, args[0])
 	case "off":
-		return out.SetState(args[0])
+		return out.SetState(nanoLeafID, args[0])
 	case "brightness":
-		return handleStateBrightnessCommand(args)
+		return handleStateBrightnessCommand(nanoLeafID, args)
 	case "hue":
 		return "hue setting comming soon", nil
 	case "saturation":
@@ -51,7 +54,7 @@ func handleStateCommand(args []string) (string, error) {
 	return "no valid command", nil
 }
 
-func handleStateBrightnessCommand(args []string) (string, error) {
+func handleStateBrightnessCommand(nanoLeafID int64, args []string) (string, error) {
 
 	switch len(args) {
 	case 2:
@@ -59,7 +62,7 @@ func handleStateBrightnessCommand(args []string) (string, error) {
 		if err != nil {
 			return "brightness needs numeric value", nil
 		}
-		return out.SetBrightness(value, 0)
+		return out.SetBrightness(nanoLeafID, value, 0)
 	case 3:
 		brightnessValue, err := strconv.ParseInt(args[1], 10, 64)
 		if err != nil {
@@ -69,7 +72,7 @@ func handleStateBrightnessCommand(args []string) (string, error) {
 		if err != nil {
 			return "brightness durations needs numeric value", nil
 		}
-		return out.SetBrightness(brightnessValue, durationValue)
+		return out.SetBrightness(nanoLeafID, brightnessValue, durationValue)
 	default:
 		return "brightness needs one or two numeric values", nil
 

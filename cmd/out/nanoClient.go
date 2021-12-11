@@ -12,9 +12,9 @@ import (
 	"github.com/polpettone/nano-leaf-control/cmd/models"
 )
 
-func GetState() (string, error) {
+func GetState(nanoLeafID int64) (string, error) {
 
-	url := config.GetURL()
+	url := config.GetURL(nanoLeafID)
 
 	req, err := http.NewRequest("GET", url+"/state", nil)
 
@@ -40,7 +40,7 @@ func GetState() (string, error) {
 	return string(body), nil
 }
 
-func SetState(state string) (string, error) {
+func SetState(nanoLeafID int64, state string) (string, error) {
 
 	var jsonValue []byte
 
@@ -52,20 +52,20 @@ func SetState(state string) (string, error) {
 
 	fmt.Printf("set state %s", jsonValue)
 
-	return makeStateAPICall(jsonValue)
+	return makeStateAPICall(nanoLeafID, jsonValue)
 }
 
-func SetBrightness(value int64, duration int64) (string, error) {
+func SetBrightness(nanoLeafID, value, duration int64) (string, error) {
 
 	jsonValue := brightnessBody(value, duration)
 
 	fmt.Printf("set brightness %s", jsonValue)
 
-	return makeStateAPICall(jsonValue)
+	return makeStateAPICall(nanoLeafID, jsonValue)
 }
 
-func makeStateAPICall(stateJsonBody []byte) (string, error) {
-	url := config.GetURL()
+func makeStateAPICall(nanoLeafID int64, stateJsonBody []byte) (string, error) {
+	url := config.GetURL(nanoLeafID)
 	req, err := http.NewRequest("PUT", url+"/state", bytes.NewBuffer(stateJsonBody))
 	if err != nil {
 		return "", err

@@ -17,7 +17,7 @@ func StateCmd() *cobra.Command {
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Fprintf(cmd.OutOrStdout(), stdout)
+			fmt.Fprint(cmd.OutOrStdout(), stdout)
 		},
 	}
 }
@@ -39,7 +39,7 @@ func handleStateCommand(command *cobra.Command, args []string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		return fmt.Sprintf("%s", state), nil
+        return state, nil
 	}
 
 	switch args[0] {

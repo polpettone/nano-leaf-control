@@ -23,7 +23,7 @@ func EffectsCmd() *cobra.Command {
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Fprintf(cmd.OutOrStdout(), stdout)
+			fmt.Fprint(cmd.OutOrStdout(), stdout)
 		},
 	}
 }

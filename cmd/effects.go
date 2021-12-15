@@ -55,6 +55,12 @@ func handleEffectsCommand(command *cobra.Command, args []string) (string, error)
 func init() {
 	c := EffectsCmd()
 	rootCmd.AddCommand(c)
+
+	c.Flags().StringP(
+		"id",
+		"",
+		"",
+		"use the nano leaf with the given id")
 }
 
 func getEffects(nanoLeafID int64) (*models.Effects, error) {

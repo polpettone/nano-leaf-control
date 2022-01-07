@@ -46,7 +46,14 @@ func handleEffectsCommand(command *cobra.Command, args []string) (string, error)
 		if err != nil {
 			return "", err
 		}
-		return fmt.Sprintf("%s", effects), nil
+        
+        prettyPrint, err := json.MarshalIndent(effects, "" , "    ")                           
+
+		if err != nil {
+			return "", err
+		}
+
+		return string(prettyPrint), nil
 	}
 
 	return setEffect(nanoLeafID, args[0])

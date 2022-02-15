@@ -39,7 +39,7 @@ func handleStateCommand(command *cobra.Command, args []string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-        return state, nil
+		return state, nil
 	}
 
 	switch args[0] {
@@ -58,8 +58,6 @@ func handleStateCommand(command *cobra.Command, args []string) (string, error) {
 	default:
 		return "no valid command", nil
 	}
-
-	return "no valid command", nil
 }
 
 func handleStateBrightnessCommand(nanoLeafID int64, args []string) (string, error) {

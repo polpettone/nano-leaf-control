@@ -32,3 +32,9 @@ type BrightnessValue struct {
 type Brightness struct {
 	BrightnessValue BrightnessValue `json:"brightness"`
 }
+
+type CurrentBrightness struct {
+	Value int64 `json:"value"`
+	Max   int64 `json:"max"`
+	Min   int64 `json:"min"`
+}

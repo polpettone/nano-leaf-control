@@ -64,6 +64,33 @@ func SetBrightness(nanoLeafID, value, duration int64) (string, error) {
 	return makeStateAPICall(nanoLeafID, jsonValue)
 }
 
+func GetBrightness(nanoLeafID int64) (*models.CurrentBrightness, error) {
+	url := config.GetURL(nanoLeafID)
+	req, err := http.NewRequest("GET", url+"/state/brightness", bytes.NewBuffer([]byte("")))
+	if err != nil {
+		return nil, err
+	}
+
+	client := &http.Client{Timeout: time.Second * 1}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var b models.CurrentBrightness
+	err = json.Unmarshal(body, &b)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &b, nil
+}
+
 func makeStateAPICall(nanoLeafID int64, stateJsonBody []byte) (string, error) {
 	url := config.GetURL(nanoLeafID)
 	req, err := http.NewRequest("PUT", url+"/state", bytes.NewBuffer(stateJsonBody))

@@ -49,6 +49,10 @@ func handleStateCommand(command *cobra.Command, args []string) (string, error) {
 		return out.SetState(nanoLeafID, args[0])
 	case "brightness":
 		return handleStateBrightnessCommand(nanoLeafID, args)
+	case "increaseBrightness":
+		return handleIncreaseBrightnessCommand(nanoLeafID, args)
+	case "decreaseBrightness":
+		return handleDecreaseBrightnessCommand(nanoLeafID, args)
 	case "hue":
 		return "hue setting comming soon", nil
 	case "saturation":
@@ -58,6 +62,26 @@ func handleStateCommand(command *cobra.Command, args []string) (string, error) {
 	default:
 		return "no valid command", nil
 	}
+}
+
+func handleIncreaseBrightnessCommand(nanoLeafID int64, args []string) (string, error) {
+	currentBrightness, err := out.GetBrightness(nanoLeafID)
+	if err != nil {
+		return "", err
+	}
+	fmt.Printf("currentBrightness: %v \n", currentBrightness)
+	newValue := currentBrightness.Value + 10
+	return out.SetBrightness(nanoLeafID, newValue, 0)
+}
+
+func handleDecreaseBrightnessCommand(nanoLeafID int64, args []string) (string, error) {
+	currentBrightness, err := out.GetBrightness(nanoLeafID)
+	if err != nil {
+		return "", err
+	}
+	fmt.Printf("currentBrightness: %v \n", currentBrightness)
+	newValue := currentBrightness.Value - 10
+	return out.SetBrightness(nanoLeafID, newValue, 0)
 }
 
 func handleStateBrightnessCommand(nanoLeafID int64, args []string) (string, error) {

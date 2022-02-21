@@ -40,19 +40,56 @@ func handleEffectsCommand(command *cobra.Command, args []string) (string, error)
 		return "", err
 	}
 
+	nextFlag, err := command.Flags().GetBool("next")
+	if err != nil {
+		return "", err
+	}
+
+	previousFlag, err := command.Flags().GetBool("previous")
+	if err != nil {
+		return "", err
+	}
+
+	effects, err := getEffects(nanoLeafID)
+	if err != nil {
+		return "", err
+	}
+
+	if nextFlag {
+		selectedFlagIndex := 0
+		nextEffectIndex := 0
+		for i, e := range effects.EffectsList {
+			if e == effects.Selected {
+				selectedFlagIndex = i
+			}
+		}
+		if len(effects.EffectsList)-1 > selectedFlagIndex {
+			nextEffectIndex = selectedFlagIndex + 1
+		}
+		return setEffect(nanoLeafID, effects.EffectsList[nextEffectIndex])
+	}
+
+	if previousFlag {
+		selectedFlagIndex := 0
+		nextEffectIndex := 0
+		for i, e := range effects.EffectsList {
+			if e == effects.Selected {
+				selectedFlagIndex = i
+			}
+		}
+		if selectedFlagIndex != 0 {
+			nextEffectIndex = selectedFlagIndex - 1
+		} else {
+			nextEffectIndex = len(effects.EffectsList) - 1
+		}
+		return setEffect(nanoLeafID, effects.EffectsList[nextEffectIndex])
+	}
+
 	if len(args) < 1 {
-
-		effects, err := getEffects(nanoLeafID)
+		prettyPrint, err := json.MarshalIndent(effects, "", "    ")
 		if err != nil {
 			return "", err
 		}
-        
-        prettyPrint, err := json.MarshalIndent(effects, "" , "    ")                           
-
-		if err != nil {
-			return "", err
-		}
-
 		return string(prettyPrint), nil
 	}
 
@@ -68,6 +105,21 @@ func init() {
 		"",
 		"",
 		"use the nano leaf with the given id")
+
+	c.Flags().BoolP(
+		"next",
+		"n",
+		false,
+		"select next effect",
+	)
+
+	c.Flags().BoolP(
+		"previous",
+		"p",
+		false,
+		"select previous effect",
+	)
+
 }
 
 func getEffects(nanoLeafID int64) (*models.Effects, error) {

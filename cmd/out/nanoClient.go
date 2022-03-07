@@ -8,15 +8,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/polpettone/nano-leaf-control/cmd/config"
 	"github.com/polpettone/nano-leaf-control/cmd/models"
 )
 
-func GetState(nanoLeafID int64) (string, error) {
+func GetState(nanoLeafURL string) (string, error) {
 
-	url := config.GetURL(nanoLeafID)
-
-	req, err := http.NewRequest("GET", url+"/state", nil)
+	req, err := http.NewRequest("GET", nanoLeafURL+"/state", nil)
 
 	if err != nil {
 		return "", err
@@ -40,7 +37,7 @@ func GetState(nanoLeafID int64) (string, error) {
 	return string(body), nil
 }
 
-func SetState(nanoLeafID int64, state string) (string, error) {
+func SetState(nanoLeafURL string, state string) (string, error) {
 
 	var jsonValue []byte
 
@@ -52,21 +49,20 @@ func SetState(nanoLeafID int64, state string) (string, error) {
 
 	fmt.Printf("set state %s", jsonValue)
 
-	return changeStateAPICall(nanoLeafID, jsonValue)
+	return changeStateAPICall(nanoLeafURL, jsonValue)
 }
 
-func SetBrightness(nanoLeafID, value, duration int64) (string, error) {
+func SetBrightness(nanoLeafURL string, value, duration int64) (string, error) {
 
 	jsonValue := brightnessBody(value, duration)
 
 	fmt.Printf("set brightness %s", jsonValue)
 
-	return changeStateAPICall(nanoLeafID, jsonValue)
+	return changeStateAPICall(nanoLeafURL, jsonValue)
 }
 
-func GetBrightness(nanoLeafID int64) (*models.CurrentBrightness, error) {
-	url := config.GetURL(nanoLeafID)
-	req, err := http.NewRequest("GET", url+"/state/brightness", bytes.NewBuffer([]byte("")))
+func GetBrightness(nanoLeafURL string) (*models.CurrentBrightness, error) {
+	req, err := http.NewRequest("GET", nanoLeafURL+"/state/brightness", bytes.NewBuffer([]byte("")))
 	if err != nil {
 		return nil, err
 	}
@@ -91,9 +87,8 @@ func GetBrightness(nanoLeafID int64) (*models.CurrentBrightness, error) {
 	return &b, nil
 }
 
-func changeStateAPICall(nanoLeafID int64, stateJsonBody []byte) (string, error) {
-	url := config.GetURL(nanoLeafID)
-	req, err := http.NewRequest("PUT", url+"/state", bytes.NewBuffer(stateJsonBody))
+func changeStateAPICall(nanoLeafURL string, stateJsonBody []byte) (string, error) {
+	req, err := http.NewRequest("PUT", nanoLeafURL+"/state", bytes.NewBuffer(stateJsonBody))
 	if err != nil {
 		return "", err
 	}

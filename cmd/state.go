@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/polpettone/nano-leaf-control/cmd/config"
 	"github.com/polpettone/nano-leaf-control/cmd/out"
 	"github.com/spf13/cobra"
 )
@@ -34,8 +35,10 @@ func handleStateCommand(command *cobra.Command, args []string) (string, error) {
 		return "", err
 	}
 
+	nanoLeafURL := config.GetURL(nanoLeafID)
+
 	if len(args) < 1 {
-		state, err := out.GetState(nanoLeafID)
+		state, err := out.GetState(nanoLeafURL)
 		if err != nil {
 			return "", err
 		}
@@ -44,15 +47,15 @@ func handleStateCommand(command *cobra.Command, args []string) (string, error) {
 
 	switch args[0] {
 	case "on":
-		return out.SetState(nanoLeafID, args[0])
+		return out.SetState(nanoLeafURL, args[0])
 	case "off":
-		return out.SetState(nanoLeafID, args[0])
+		return out.SetState(nanoLeafURL, args[0])
 	case "brightness":
-		return handleStateBrightnessCommand(nanoLeafID, args)
+		return handleStateBrightnessCommand(nanoLeafURL, args)
 	case "increaseBrightness":
-		return handleIncreaseBrightnessCommand(nanoLeafID, args)
+		return handleIncreaseBrightnessCommand(nanoLeafURL, args)
 	case "decreaseBrightness":
-		return handleDecreaseBrightnessCommand(nanoLeafID, args)
+		return handleDecreaseBrightnessCommand(nanoLeafURL, args)
 	case "hue":
 		return "hue setting comming soon", nil
 	case "saturation":
@@ -64,27 +67,27 @@ func handleStateCommand(command *cobra.Command, args []string) (string, error) {
 	}
 }
 
-func handleIncreaseBrightnessCommand(nanoLeafID int64, args []string) (string, error) {
-	currentBrightness, err := out.GetBrightness(nanoLeafID)
+func handleIncreaseBrightnessCommand(nanoLeafURL string, args []string) (string, error) {
+	currentBrightness, err := out.GetBrightness(nanoLeafURL)
 	if err != nil {
 		return "", err
 	}
 	fmt.Printf("currentBrightness: %v \n", currentBrightness)
 	newValue := currentBrightness.Value + 10
-	return out.SetBrightness(nanoLeafID, newValue, 0)
+	return out.SetBrightness(nanoLeafURL, newValue, 0)
 }
 
-func handleDecreaseBrightnessCommand(nanoLeafID int64, args []string) (string, error) {
-	currentBrightness, err := out.GetBrightness(nanoLeafID)
+func handleDecreaseBrightnessCommand(nanoLeafURL string, args []string) (string, error) {
+	currentBrightness, err := out.GetBrightness(nanoLeafURL)
 	if err != nil {
 		return "", err
 	}
 	fmt.Printf("currentBrightness: %v \n", currentBrightness)
 	newValue := currentBrightness.Value - 10
-	return out.SetBrightness(nanoLeafID, newValue, 0)
+	return out.SetBrightness(nanoLeafURL, newValue, 0)
 }
 
-func handleStateBrightnessCommand(nanoLeafID int64, args []string) (string, error) {
+func handleStateBrightnessCommand(nanoLeafURL string, args []string) (string, error) {
 
 	switch len(args) {
 	case 2:
@@ -92,7 +95,7 @@ func handleStateBrightnessCommand(nanoLeafID int64, args []string) (string, erro
 		if err != nil {
 			return "brightness needs numeric value", nil
 		}
-		return out.SetBrightness(nanoLeafID, value, 0)
+		return out.SetBrightness(nanoLeafURL, value, 0)
 	case 3:
 		brightnessValue, err := strconv.ParseInt(args[1], 10, 64)
 		if err != nil {
@@ -102,7 +105,7 @@ func handleStateBrightnessCommand(nanoLeafID int64, args []string) (string, erro
 		if err != nil {
 			return "brightness durations needs numeric value", nil
 		}
-		return out.SetBrightness(nanoLeafID, brightnessValue, durationValue)
+		return out.SetBrightness(nanoLeafURL, brightnessValue, durationValue)
 	default:
 		return "brightness needs one or two numeric values", nil
 

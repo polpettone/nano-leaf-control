@@ -52,7 +52,7 @@ func SetState(nanoLeafID int64, state string) (string, error) {
 
 	fmt.Printf("set state %s", jsonValue)
 
-	return makeStateAPICall(nanoLeafID, jsonValue)
+	return changeStateAPICall(nanoLeafID, jsonValue)
 }
 
 func SetBrightness(nanoLeafID, value, duration int64) (string, error) {
@@ -61,7 +61,7 @@ func SetBrightness(nanoLeafID, value, duration int64) (string, error) {
 
 	fmt.Printf("set brightness %s", jsonValue)
 
-	return makeStateAPICall(nanoLeafID, jsonValue)
+	return changeStateAPICall(nanoLeafID, jsonValue)
 }
 
 func GetBrightness(nanoLeafID int64) (*models.CurrentBrightness, error) {
@@ -91,7 +91,7 @@ func GetBrightness(nanoLeafID int64) (*models.CurrentBrightness, error) {
 	return &b, nil
 }
 
-func makeStateAPICall(nanoLeafID int64, stateJsonBody []byte) (string, error) {
+func changeStateAPICall(nanoLeafID int64, stateJsonBody []byte) (string, error) {
 	url := config.GetURL(nanoLeafID)
 	req, err := http.NewRequest("PUT", url+"/state", bytes.NewBuffer(stateJsonBody))
 	if err != nil {
